@@ -1,0 +1,1 @@
+This project must be located in the <SDK>/projects/target_apps/template

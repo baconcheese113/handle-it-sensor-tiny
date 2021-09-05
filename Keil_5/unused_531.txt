@@ -1,4 +1,4 @@
-;#<FEEDBACK># ARM Linker, 5060750: Last Updated: Thu Mar 05 18:57:59 2020
+;#<FEEDBACK># ARM Linker, 5060960: Last Updated: Sun Sep 05 00:29:15 2021
 ;VERSION 0.2
 ;FILE adc_531.o
 adc_correct_sample <= USED 0
@@ -42,7 +42,6 @@ app_custs1_init <= USED 0
 app_custs1_val_wr_validate <= USED 0
 ;FILE app_customs_task.o
 ;FILE app_default_handlers.o
-default_advertise_operation <= USED 0
 default_app_generate_unique_static_random_addr <= USED 0
 default_app_on_addr_resolve_failed <= USED 0
 default_app_on_addr_solved_ind <= USED 0
@@ -54,11 +53,7 @@ default_app_on_ral_cmp_evt <= USED 0
 ;FILE app_diss_task.o
 ;FILE app_easy_msg_utils.o
 app_easy_msg_free_callback <= USED 0
-app_easy_msg_modify <= USED 0
-app_easy_msg_set <= USED 0
-app_easy_wakeup <= USED 0
 app_easy_wakeup_free <= USED 0
-app_easy_wakeup_set <= USED 0
 ;FILE app_easy_security.o
 app_easy_security_accept_encryption <= USED 0
 app_easy_security_bdb_add_entry <= USED 0
@@ -108,11 +103,8 @@ arch_set_stateful_hibernation <= USED 0
 ;FILE arch_main.o
 ;FILE arch_rom.o
 ;FILE arch_sleep.o
-arch_ble_ext_wakeup_off <= USED 0
 arch_ble_ext_wakeup_on <= USED 0
-arch_force_active_mode <= USED 0
 arch_last_rwble_evt_get <= USED 0
-arch_restore_sleep_mode <= USED 0
 arch_set_deep_sleep <= USED 0
 ;FILE arch_system.o
 arch_set_pxact_gpio <= USED 0
@@ -123,22 +115,18 @@ battery_get_lvl <= USED 0
 battery_get_voltage <= USED 0
 ;FILE ble_arp.o
 ;FILE gpio.o
-GPIO_ConfigurePin <= USED 0
 GPIO_ConfigurePinPower <= USED 0
 GPIO_DisablePorPin <= USED 0
 GPIO_EnableIRQ <= USED 0
 GPIO_EnablePorPin <= USED 0
 GPIO_GetIRQInputLevel <= USED 0
 GPIO_GetPinFunction <= USED 0
-GPIO_GetPinStatus <= USED 0
 GPIO_GetPorTime <= USED 0
 GPIO_RegisterCallback <= USED 0
-GPIO_SetActive <= USED 0
 GPIO_SetIRQInputLevel <= USED 0
-GPIO_SetInactive <= USED 0
-GPIO_SetPinFunction <= USED 0
 GPIO_SetPorTime <= USED 0
 GPIO_is_valid <= USED 0
+;FILE handleit_sensor.o
 ;FILE hardfault_handler.o
 ;FILE hash.o
 hash <= USED 0
@@ -281,25 +269,15 @@ systick_value <= USED 0
 systick_wait <= USED 0
 ;FILE trng.o
 ;FILE uart.o
-uart_baudrate_setf <= USED 0
 uart_disable <= USED 0
 uart_disable_flow_control <= USED 0
-uart_enable <= USED 0
 uart_enable_flow_control <= USED 0
-uart_initialize <= USED 0
 uart_read_buffer <= USED 0
 uart_read_byte <= USED 0
 uart_receive <= USED 0
 uart_register_err_cb <= USED 0
 uart_register_rx_cb <= USED 0
-uart_register_tx_cb <= USED 0
-uart_send <= USED 0
-uart_wait_tx_finish <= USED 0
-uart_write_buffer <= USED 0
-uart_write_byte <= USED 0
-;FILE handleit_sensor.o
 ;FILE user_periph_setup.o
-set_pad_functions <= USED 0
 ;FILE wkupct_quadec.o
 quad_decoder_clear_irq <= USED 0
 quad_decoder_disable_irq <= USED 0
@@ -311,5 +289,3 @@ wkupct2_disable_irq <= USED 0
 wkupct2_enable_irq <= USED 0
 wkupct2_register_callback <= USED 0
 wkupct_disable_irq <= USED 0
-wkupct_enable_irq <= USED 0
-wkupct_register_callback <= USED 0

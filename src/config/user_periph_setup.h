@@ -34,10 +34,23 @@
 /****************************************************************************************/
 /* UART2 configuration to use with arch_console print messages                          */
 /****************************************************************************************/
+
+	// RESERVE_GPIO(D6, FORCE_HIGH_PORT, FORCE_HIGH_PIN, PID_GPIO);
+	// RESERVE_GPIO(D4, FORCE_LOW_PORT, FORCE_LOW_PIN, PID_GPIO);
+	// RESERVE_GPIO(BTN, BTN_PORT, BTN_PIN, PID_GPIO);
+// Define LED ports
+#define FORCE_PORT			        GPIO_PORT_0
+#define FORCE_HIGH_PIN			    GPIO_PIN_4
+#define FORCE_LOW_PIN			    GPIO_PIN_8
+		
+// Input ports
+#define PRESSURE_PORT		        GPIO_PORT_0
+#define	PRESSURE_PIN		        GPIO_PIN_6
+
 // Define UART2 Tx Pad
 #if defined (__DA14531__)
     #define UART2_TX_PORT           GPIO_PORT_0
-    #define UART2_TX_PIN            GPIO_PIN_6
+    #define UART2_TX_PIN            GPIO_PIN_5
 #else
     #define UART2_TX_PORT           GPIO_PORT_0
     #define UART2_TX_PIN            GPIO_PIN_4

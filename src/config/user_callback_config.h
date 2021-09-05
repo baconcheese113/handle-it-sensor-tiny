@@ -149,19 +149,19 @@ static const struct default_app_operations user_default_app_operations = {
 };
 
 static const struct arch_main_loop_callbacks user_app_main_loop_callbacks = {
-    .app_on_init            = default_app_on_init,
+    .app_on_init            = user_app_on_init,
 
     // By default the watchdog timer is reloaded and resumed when the system wakes up.
     // The user has to take into account the watchdog timer handling (keep it running,
     // freeze it, reload it, resume it, etc), when the app_on_ble_powered() is being
     // called and may potentially affect the main loop.
-    .app_on_ble_powered     = NULL,
+    .app_on_ble_powered     = app_on_full_power,
 
     // By default the watchdog timer is reloaded and resumed when the system wakes up.
     // The user has to take into account the watchdog timer handling (keep it running,
     // freeze it, reload it, resume it, etc), when the app_on_system_powered() is being
     // called and may potentially affect the main loop.
-    .app_on_system_powered  = NULL,
+    .app_on_system_powered  = app_on_full_power,
 
     .app_before_sleep       = NULL,
     .app_validate_sleep     = NULL,

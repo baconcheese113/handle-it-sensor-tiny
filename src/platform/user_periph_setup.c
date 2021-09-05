@@ -38,6 +38,9 @@ void GPIO_reservations(void)
     i.e. to reserve P0_1 as Generic Purpose I/O:
     RESERVE_GPIO(DESCRIPTIVE_NAME, GPIO_PORT_0, GPIO_PIN_1, PID_GPIO);
 */
+	RESERVE_GPIO(D6, FORCE_PORT, FORCE_HIGH_PIN, PID_GPIO);
+	RESERVE_GPIO(D4, FORCE_PORT, FORCE_LOW_PIN, PID_GPIO);
+	RESERVE_GPIO(PRESSURE, PRESSURE_PORT, PRESSURE_PIN, PID_GPIO);
 
 #if defined (CFG_PRINTF_UART2)
     RESERVE_GPIO(UART2_TX, UART2_TX_PORT, UART2_TX_PIN, PID_UART2_TX);
@@ -52,6 +55,10 @@ void set_pad_functions(void)
     i.e. to set P0_1 as Generic purpose Output:
     GPIO_ConfigurePin(GPIO_PORT_0, GPIO_PIN_1, OUTPUT, PID_GPIO, false);
 */
+
+    GPIO_ConfigurePin(FORCE_PORT, FORCE_HIGH_PIN, OUTPUT, PID_GPIO, false);
+    GPIO_ConfigurePin(FORCE_PORT, FORCE_LOW_PIN, OUTPUT, PID_GPIO, false);
+    GPIO_ConfigurePin(PRESSURE_PORT, PRESSURE_PIN, INPUT_PULLDOWN, PID_GPIO, false);
 
 #if defined (__DA14586__)
     // Disallow spontaneous DA14586 SPI Flash wake-up

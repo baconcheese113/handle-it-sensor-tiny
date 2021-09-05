@@ -67,6 +67,10 @@ void user_on_connection(uint8_t connection_idx, struct gapc_connection_req_ind c
 
 void user_on_disconnect( struct gapc_disconnect_ind const *param );
 
+void user_app_on_init(void);
+
+arch_main_loop_callback_ret_t app_on_full_power(void);
+
 /// @} APP
 
 #endif // _HANDLEIT_SENSOR_H_

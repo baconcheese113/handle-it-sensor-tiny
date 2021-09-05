@@ -87,10 +87,10 @@ static const struct advertise_configuration user_adv_conf = {
     .addr_src = APP_CFG_ADDR_SRC(USER_CFG_ADDRESS_MODE),
 
     /// Minimum interval for advertising
-    .intv_min = MS_TO_BLESLOTS(687.5),                    // 687.5ms
+    .intv_min = MS_TO_BLESLOTS(100),                    // 100ms
 
     /// Maximum interval for advertising
-    .intv_max = MS_TO_BLESLOTS(687.5),                    // 687.5ms
+    .intv_max = MS_TO_BLESLOTS(100),                    // 100ms
 
     /**
      *  Advertising channels map:
@@ -155,7 +155,9 @@ static const struct advertise_configuration user_adv_conf = {
  ****************************************************************************************
  */
 /// Advertising data
-#define USER_ADVERTISE_DATA                   ""
+#define USER_ADVERTISE_DATA                   ("\x11"\
+                                            ADV_TYPE_COMPLETE_LIST_128BIT_SERVICE_IDS\
+                                            "\xfb\x34\x9b\x5f\x80\x00\x00\x80\x00\x10\x00\x00\x1a\x18\x00\x10")
 
 /// Advertising data length - maximum 28 bytes, 3 bytes are reserved to set
 #define USER_ADVERTISE_DATA_LEN               (sizeof(USER_ADVERTISE_DATA)-1)
@@ -179,7 +181,7 @@ static const struct advertise_configuration user_adv_conf = {
  ****************************************************************************************
  */
 /// Device name
-#define USER_DEVICE_NAME        "DIALOG-TMPL"
+#define USER_DEVICE_NAME        "HandleIt Client"
 
 /// Device name length
 #define USER_DEVICE_NAME_LEN    (sizeof(USER_DEVICE_NAME)-1)

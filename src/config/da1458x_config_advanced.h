@@ -464,7 +464,8 @@
 /* Disable quadrature decoder on start up. The quadrature decoder is by default enabled on system power up and  */
 /* it may count events. This leads to WKUP_QUADEC_IRQn pending interrupts.                                      */
 /****************************************************************************************************************/
-#define CFG_DISABLE_QUADEC_ON_START_UP
+// #define CFG_DISABLE_QUADEC_ON_START_UP
+// #undef CFG_DISABLE_QUADEC_ON_START_UP
 
 #endif
 #endif // _DA1458X_CONFIG_ADVANCED_H_

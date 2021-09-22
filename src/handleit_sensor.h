@@ -15,28 +15,14 @@
 #ifndef _HANDLEIT_SENSOR_H_
 #define _HANDLEIT_SENSOR_H_
 
-/**
- ****************************************************************************************
- * @addtogroup APP
- * @ingroup RICOW
- *
- * @brief 
- *
- * @{
- ****************************************************************************************
- */
-
 /*
  * INCLUDE FILES
  ****************************************************************************************
  */
 
+#include <stdint.h>
 #include "rwble_config.h"
-#include "app_task.h"                  // application task
 #include "gapc_task.h"                 // gap functions and messages
-#include "gapm_task.h"                 // gap functions and messages
-#include "app.h"                       // application definitions
-#include "co_error.h"                  // error code definitions
  
 
 /****************************************************************************
@@ -58,18 +44,95 @@ i.e.
  ****************************************************************************************
  */
 
+/****************************************************************************************
+* Selects the sleep mode that the device will enter after advertising completion        *
+*  																																                      *
+*  - CFG_APP_GOTO_HIBERNATION       Hibernation mode (DA14531 only)                     *
+*  - CFG_APP_GOTO_STATEFUL_HIBERNATION   Stateful Hibernation mode (DA14531 only)       *
+* Note: If none is defined, then system will enter the selected Extended sleep mode     *
+*                                                                                       *
+* IMPORTANT: If CFG_APP_GOTO_STATEFUL_HIBERNATION is defined, CFG_STATEFUL_HIBERNATION  *
+* shall be defined as well (in Options for Target 'DA14531' --> Asm -->                 *
+* Conditional Assembly Control Symbols --> Define:)                                     *
+****************************************************************************************/
+
+#define CFG_APP_GOTO_HIBERNATION
+#undef CFG_APP_GOTO_STATEFUL_HIBERNATION
+
+#if defined (CFG_APP_GOTO_HIBERNATION)
+	#undef HIBERNATION_SPI
+	#undef HIBERNATION_OTP
+	#define HIBERNATION_SYSRAM
+
+#if defined (HIBERNATION_SPI)
+/****************************************************************************************
+ * Hibernation mode configuration                                                       *
+ ****************************************************************************************/
+#define CFG_HIBERNATION_RAM1            PD_SYS_DOWN_RAM_OFF
+#define CFG_HIBERNATION_RAM2            PD_SYS_DOWN_RAM_OFF
+#define CFG_HIBERNATION_RAM3            PD_SYS_DOWN_RAM_OFF
+#define CFG_HIBERNATION_REMAP           REMAP_ADDR0_TO_ROM
+#define CFG_HIBERNATION_PAD_LATCH_EN    false
+#endif
+
+#if defined (HIBERNATION_OTP)
+/****************************************************************************************
+ * Hibernation mode configuration                                                       *
+ ****************************************************************************************/
+#define CFG_HIBERNATION_RAM1            PD_SYS_DOWN_RAM_OFF
+#define CFG_HIBERNATION_RAM2            PD_SYS_DOWN_RAM_OFF
+#define CFG_HIBERNATION_RAM3            PD_SYS_DOWN_RAM_OFF
+#define CFG_HIBERNATION_REMAP           REMAP_ADDR0_TO_ROM
+#define CFG_HIBERNATION_PAD_LATCH_EN    false
+#endif
+
+#if defined (HIBERNATION_SYSRAM)
+/****************************************************************************************
+ * Hibernation mode configuration                                                       *
+ ****************************************************************************************/
+#define CFG_HIBERNATION_RAM1            PD_SYS_DOWN_RAM_ON
+#define CFG_HIBERNATION_RAM2            PD_SYS_DOWN_RAM_ON
+#define CFG_HIBERNATION_RAM3            PD_SYS_DOWN_RAM_ON
+#define CFG_HIBERNATION_REMAP           REMAP_ADDR0_TO_RAM1
+#define CFG_HIBERNATION_PAD_LATCH_EN    false
+#endif
+
+#endif // CFG_APP_GOTO_HIBERNATION
+
+
+#if defined (CFG_APP_GOTO_STATEFUL_HIBERNATION)
+/****************************************************************************************
+ * Stateful Hibernation mode configuration                                              *
+ ****************************************************************************************/
+#define CFG_STATEFUL_HIBERNATION_RAM1           PD_SYS_DOWN_RAM_ON
+#define CFG_STATEFUL_HIBERNATION_RAM2           PD_SYS_DOWN_RAM_ON
+#define CFG_STATEFUL_HIBERNATION_RAM3           PD_SYS_DOWN_RAM_ON
+#define CFG_STATEFUL_HIBERNATION_REMAP          STATEFUL_HIBERN_REMAP_ADDR0_TO_RAM1
+#define CFG_STATEFUL_HIBERNATION_PAD_LATCH_EN   false
+#endif //CFG_APP_GOTO_STATEFUL_HIBERNATION
+
 /*
  * FUNCTION DECLARATIONS
  ****************************************************************************************
  */
 
-void user_on_connection(uint8_t connection_idx, struct gapc_connection_req_ind const *param);
+/**
+ ****************************************************************************************
+ * @brief Enable push button. Register callback function for button press event.
+ *        Must be called in periph_init().
+ ****************************************************************************************
+ */
+void app_button_enable(void);
 
-void user_on_disconnect( struct gapc_disconnect_ind const *param );
+/**
+ ****************************************************************************************
+ * @brief Function to be called on the advertising completion event.
+ * @param[in] status GAP Error code
+ ****************************************************************************************
+ */
+void app_advertise_complete(const uint8_t status);
 
 void user_app_on_init(void);
-
-arch_main_loop_callback_ret_t app_on_full_power(void);
 
 /// @} APP
 

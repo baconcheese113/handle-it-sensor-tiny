@@ -20,39 +20,17 @@
  ****************************************************************************************
  */
 
-#include "app_api.h"
+#include "app_callback.h"
+#include "app_default_handlers.h"
+#include "app_entry_point.h"
 #include "app_bass.h"
-#include "app_findme.h"
 #include "app_proxr.h"
 #include "app_suotar.h"
-#include "app_callback.h"
 #include "app_prf_types.h"
 #if (BLE_APP_SEC)
 #include "app_bond_db.h"
 #endif // (BLE_APP_SEC)
 #include "handleit_sensor.h"
-
-/*
- * FUNCTION DECLARATIONS
- ****************************************************************************************
- */
-
-/**
- ****************************************************************************************
- * @brief Function to be called on the advertising completion event.
- * @param[in] uint8_t GAP Error code
- ****************************************************************************************
- */
-void app_advertise_complete(const uint8_t);
-
-/**
- ****************************************************************************************
- * @brief SUOTAR session start or stop event handler.
- * @param[in] suotar_event SUOTAR_START/SUOTAR_STOP
- ****************************************************************************************
- */
-void on_suotar_status_change(const uint8_t suotar_event);
-
 
 /*
  * LOCAL VARIABLE DEFINITIONS
@@ -63,12 +41,6 @@ void on_suotar_status_change(const uint8_t suotar_event);
 static const struct app_bass_cb user_app_bass_cb = {
     .on_batt_level_upd_rsp      = NULL,
     .on_batt_level_ntf_cfg_ind  = NULL,
-};
-#endif
-
-#if (BLE_FINDME_TARGET)
-static const struct app_findt_cb user_app_findt_cb = {
-    .on_findt_alert_ind         = default_findt_alert_ind_handler,
 };
 #endif
 
@@ -85,13 +57,13 @@ static const struct app_suotar_cb user_app_suotar_cb = {
 #endif
 
 static const struct app_callbacks user_app_callbacks = {
-    .app_on_connection                  = user_on_connection,
-    .app_on_disconnect                  = user_on_disconnect,
+    .app_on_connection                  = default_app_on_connection,
+    .app_on_disconnect                  = default_app_on_disconnect,
     .app_on_update_params_rejected      = NULL,
     .app_on_update_params_complete      = NULL,
     .app_on_set_dev_config_complete     = default_app_on_set_dev_config_complete,
     .app_on_adv_nonconn_complete        = NULL,
-    .app_on_adv_undirect_complete       = NULL,
+    .app_on_adv_undirect_complete       = app_advertise_complete,
     .app_on_adv_direct_complete         = NULL,
     .app_on_db_init_complete            = default_app_on_db_init_complete,
     .app_on_scanning_completed          = NULL,
@@ -155,13 +127,13 @@ static const struct arch_main_loop_callbacks user_app_main_loop_callbacks = {
     // The user has to take into account the watchdog timer handling (keep it running,
     // freeze it, reload it, resume it, etc), when the app_on_ble_powered() is being
     // called and may potentially affect the main loop.
-    .app_on_ble_powered     = app_on_full_power,
+    .app_on_ble_powered     = NULL,
 
     // By default the watchdog timer is reloaded and resumed when the system wakes up.
     // The user has to take into account the watchdog timer handling (keep it running,
     // freeze it, reload it, resume it, etc), when the app_on_system_powered() is being
     // called and may potentially affect the main loop.
-    .app_on_system_powered  = app_on_full_power,
+    .app_on_system_powered  = NULL,
 
     .app_before_sleep       = NULL,
     .app_validate_sleep     = NULL,

@@ -63,9 +63,9 @@
  */
 void update_adv_data(void)
 {
-    // arch_printf("update_adv_data()\n\r");
+    arch_printf("update_adv_data()\n\r");
     bool isPressing = GPIO_GetPinStatus(PRESSURE_PORT, PRESSURE_PIN);
-    // arch_printf("isPressing is %s\n\r", isPressing ? "TRUE" : "FALSE");
+    arch_printf("isPressing is %s\n\r", isPressing ? "TRUE" : "FALSE");
     
     // Update BLE characteristic
     struct custs1_val_set_req *req = KE_MSG_ALLOC_DYN(CUSTS1_VAL_SET_REQ,
@@ -93,8 +93,8 @@ void update_adv_data(void)
 */
 static void app_wakeup_cb(void)
 {
-    // arch_printf("app_wakeup_cb()\n\r");
-    // arch_printf("state:%s\n\r", ke_state_get(TASK_APP));
+    arch_printf("app_wakeup_cb()\n\r");
+    arch_printf("state:%s\n\r", ke_state_get(TASK_APP));
     // If state is not idle, ignore the message
     if (ke_state_get(TASK_APP) == APP_CONNECTABLE)
     {
@@ -125,18 +125,18 @@ static void app_resume_system_from_sleep(void)
  */
 static void app_button_press_cb(void)
 {
-    // arch_printf("app_button_press_cb()\n\r");
+    arch_printf("app_button_press_cb()\n\r");
 #if (BLE_PROX_REPORTER)
     if (alert_state.lvl != PROXR_ALERT_NONE)
     {
-        // arch_printf("\tapp_proxr_alert_stop()\n\r");
+        arch_printf("\tapp_proxr_alert_stop()\n\r");
         app_proxr_alert_stop();
     }
 #endif
     app_resume_system_from_sleep();
     
     // TODO update adv data correctly
-    // update_adv_data();
+    update_adv_data();
 
     app_button_enable();
 }
@@ -152,13 +152,13 @@ void app_button_enable(void)
     // arch_printf("app_button_enable()\n\r");
     app_easy_wakeup_set(app_wakeup_cb);
     wkupct_register_callback(app_button_press_cb);
-    uint8_t WKUPCT_PIN_POLARITY = 
+    uint8_t WKUPCT_PIN_POLARITY_DYN = 
         GPIO_GetPinStatus(PRESSURE_PORT, PRESSURE_PIN) 
         ? WKUPCT_PIN_POLARITY_LOW 
         : WKUPCT_PIN_POLARITY_HIGH;
-    // if(!GPIO_GetPinStatus(PRESSURE_PORT, PRESSURE_PIN)) {
+    // if(GPIO_GetPinStatus(PRESSURE_PORT, PRESSURE_PIN)) {
         wkupct_enable_irq(WKUPCT_PIN_SELECT(PRESSURE_PORT, PRESSURE_PIN), // select pin (PRESSURE_PORT, PRESSURE_PIN)
-                        WKUPCT_PIN_POLARITY(PRESSURE_PORT, PRESSURE_PIN, WKUPCT_PIN_POLARITY), // polarity low or high
+                        WKUPCT_PIN_POLARITY(PRESSURE_PORT, PRESSURE_PIN, WKUPCT_PIN_POLARITY_DYN), // polarity low or high
                         1, // 1 event
                         40); // debouncing time = 40
     // }
@@ -166,7 +166,7 @@ void app_button_enable(void)
 
 void user_app_on_init(void)
 {
-    // arch_printf("user_app_init()\n\r");
+    arch_printf("user_app_init()\n\r");
     // this will immediatelay put the device into hibernation after powering on
     spi_flash_power_down();
 
@@ -181,7 +181,7 @@ void user_app_on_init(void)
 
 void app_advertise_complete(const uint8_t status)
 {
-    // arch_printf("app_advertise_complete()\n\r");
+    arch_printf("app_advertise_complete()\n\r");
     if ((status == GAP_ERR_NO_ERROR) || (status == GAP_ERR_CANCELED))
     {
 

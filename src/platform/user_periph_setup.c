@@ -56,7 +56,7 @@ void GPIO_reservations(void)
 
 #if (defined (CFG_APP_GOTO_HIBERNATION) || defined (CFG_APP_GOTO_STATEFUL_HIBERNATION))
     // Wake up from hibernation pin
-    RESERVE_GPIO(HIB_WAKE_UP, HIB_WAKE_UP_PORT, HIB_WAKE_UP_PIN, PID_GPIO);
+    // RESERVE_GPIO(HIB_WAKE_UP, HIB_WAKE_UP_PORT, HIB_WAKE_UP_PIN, PID_GPIO);
 #endif
 
 #if defined (CFG_SPI_FLASH_ENABLE)
@@ -81,7 +81,7 @@ void set_pad_functions(void)
 
 #if (defined (CFG_APP_GOTO_HIBERNATION) || defined (CFG_APP_GOTO_STATEFUL_HIBERNATION))
     // Wake up from hibernation pin
-    GPIO_ConfigurePin(HIB_WAKE_UP_PORT, HIB_WAKE_UP_PIN, INPUT_PULLDOWN, PID_GPIO, false);
+    // GPIO_ConfigurePin(HIB_WAKE_UP_PORT, HIB_WAKE_UP_PIN, INPUT_PULLDOWN, PID_GPIO, false);
 #endif
 
 #if defined (CFG_PRINTF_UART2)
@@ -149,7 +149,7 @@ void periph_init(void)
 #if defined (CFG_PRINTF_UART2)
     // Initialize UART2
     uart_initialize(UART2, &uart_cfg);
-    arch_printf("**uart initialized**\r\n");
+    // arch_printf("**uart initialized**\r\n");
 #endif
 
 #if defined (CFG_SPI_FLASH_ENABLE)

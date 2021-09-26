@@ -77,7 +77,7 @@ void set_pad_functions(void)
     GPIO_ConfigurePin(GPIO_PORT_0, GPIO_PIN_1, OUTPUT, PID_GPIO, false);
 */
 
-    GPIO_ConfigurePin(PRESSURE_PORT, PRESSURE_PIN, INPUT_PULLDOWN, PID_GPIO, false);
+    GPIO_ConfigurePin(PRESSURE_PORT, PRESSURE_PIN, INPUT, PID_GPIO, true);
 
 #if (defined (CFG_APP_GOTO_HIBERNATION) || defined (CFG_APP_GOTO_STATEFUL_HIBERNATION))
     // Wake up from hibernation pin

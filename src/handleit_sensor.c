@@ -64,7 +64,7 @@
 void update_adv_data(void)
 {
     arch_printf("update_adv_data()\n\r");
-    bool isPressing = GPIO_GetPinStatus(PRESSURE_PORT, PRESSURE_PIN);
+    bool isPressing = !GPIO_GetPinStatus(PRESSURE_PORT, PRESSURE_PIN);
     arch_printf("isPressing is %s\n\r", isPressing ? "TRUE" : "FALSE");
     
     // Update BLE characteristic
@@ -78,7 +78,8 @@ void update_adv_data(void)
     // req->notification = true;
     req->handle = SVC2_WRITE_1_VAL;
     req->length = DEF_SVC2_WRITE_VAL_1_CHAR_LEN;
-    req->value[0] = isPressing ? 0x1F : 0x00;
+    // Since it's difficult to tell if force is applied to the resistor, we always assume isPressing
+    req->value[0] = 0x1F; // isPressing ? 0x1F : 0x00;
     req->value[1] = 0;
     req->value[2] = 0;
     req->value[3] = 0;
@@ -135,7 +136,6 @@ static void app_button_press_cb(void)
 #endif
     app_resume_system_from_sleep();
     
-    // TODO update adv data correctly
     update_adv_data();
 
     app_button_enable();
@@ -152,21 +152,21 @@ void app_button_enable(void)
     // arch_printf("app_button_enable()\n\r");
     app_easy_wakeup_set(app_wakeup_cb);
     wkupct_register_callback(app_button_press_cb);
-    uint8_t WKUPCT_PIN_POLARITY_DYN = 
+    // We can go to sleep with the pin high or low, so this determines which polarity we want to trigger the wake up
+    uint8_t wkupct_pin_dyn = 
         GPIO_GetPinStatus(PRESSURE_PORT, PRESSURE_PIN) 
         ? WKUPCT_PIN_POLARITY_LOW 
         : WKUPCT_PIN_POLARITY_HIGH;
-    // if(GPIO_GetPinStatus(PRESSURE_PORT, PRESSURE_PIN)) {
-        wkupct_enable_irq(WKUPCT_PIN_SELECT(PRESSURE_PORT, PRESSURE_PIN), // select pin (PRESSURE_PORT, PRESSURE_PIN)
-                        WKUPCT_PIN_POLARITY(PRESSURE_PORT, PRESSURE_PIN, WKUPCT_PIN_POLARITY_DYN), // polarity low or high
-                        1, // 1 event
-                        40); // debouncing time = 40
-    // }
+    wkupct_enable_irq(WKUPCT_PIN_SELECT(PRESSURE_PORT, PRESSURE_PIN), // select pin (PRESSURE_PORT, PRESSURE_PIN)
+                    WKUPCT_PIN_POLARITY(PRESSURE_PORT, PRESSURE_PIN, wkupct_pin_dyn), // polarity low or high
+                    1, // 1 event
+                    40); // debouncing time = 40
 }
 
 void user_app_on_init(void)
 {
-    arch_printf("user_app_init()\n\r");
+    bool isPressing = !GPIO_GetPinStatus(PRESSURE_PORT, PRESSURE_PIN);
+    arch_printf("user_app_init() and isPressing is %s\n\r", isPressing ? "TRUE" : "FALSE");
     // this will immediatelay put the device into hibernation after powering on
     spi_flash_power_down();
 
@@ -182,6 +182,10 @@ void user_app_on_init(void)
 void app_advertise_complete(const uint8_t status)
 {
     arch_printf("app_advertise_complete()\n\r");
+
+    // this method is called after the device connects, so this initializes the advertising data
+    update_adv_data();
+    
     if ((status == GAP_ERR_NO_ERROR) || (status == GAP_ERR_CANCELED))
     {
 

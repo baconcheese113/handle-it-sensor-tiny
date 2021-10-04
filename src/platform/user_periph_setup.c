@@ -48,15 +48,15 @@ void GPIO_reservations(void)
     i.e. to reserve P0_1 as Generic Purpose I/O:
     RESERVE_GPIO(DESCRIPTIVE_NAME, GPIO_PORT_0, GPIO_PIN_1, PID_GPIO);
 */
-	RESERVE_GPIO(PRESSURE, PRESSURE_PORT, PRESSURE_PIN, PID_GPIO);
 
 #if defined (CFG_PRINTF_UART2)
     RESERVE_GPIO(UART2_TX, UART2_TX_PORT, UART2_TX_PIN, PID_UART2_TX);
 #endif
 
 #if (defined (CFG_APP_GOTO_HIBERNATION) || defined (CFG_APP_GOTO_STATEFUL_HIBERNATION))
-    // Wake up from hibernation pin
-    // RESERVE_GPIO(HIB_WAKE_UP, HIB_WAKE_UP_PORT, HIB_WAKE_UP_PIN, PID_GPIO);
+	RESERVE_GPIO(PRESSURE, PRESSURE_PORT, PRESSURE_PIN, PID_GPIO);
+    // Reset flash to restore sys from hibernation
+    RESERVE_GPIO(RESET_FLASH, RESET_FLASH_PORT, RESET_FLASH_PIN, PID_GPIO);
 #endif
 
 #if defined (CFG_SPI_FLASH_ENABLE)
@@ -77,11 +77,11 @@ void set_pad_functions(void)
     GPIO_ConfigurePin(GPIO_PORT_0, GPIO_PIN_1, OUTPUT, PID_GPIO, false);
 */
 
-    GPIO_ConfigurePin(PRESSURE_PORT, PRESSURE_PIN, INPUT, PID_GPIO, true);
 
 #if (defined (CFG_APP_GOTO_HIBERNATION) || defined (CFG_APP_GOTO_STATEFUL_HIBERNATION))
-    // Wake up from hibernation pin
-    // GPIO_ConfigurePin(HIB_WAKE_UP_PORT, HIB_WAKE_UP_PIN, INPUT_PULLDOWN, PID_GPIO, false);
+    GPIO_ConfigurePin(PRESSURE_PORT, PRESSURE_PIN, INPUT, PID_GPIO, true);
+    // Reset flash mem pin
+    GPIO_ConfigurePin(RESET_FLASH_PORT, RESET_FLASH_PIN, INPUT_PULLDOWN, PID_GPIO, false);
 #endif
 
 #if defined (CFG_PRINTF_UART2)
@@ -138,7 +138,9 @@ static const spi_flash_cfg_t spi_flash_cfg = {
 void periph_init(void)
 {
     // Disable HW Reset functionality of P0_0
-    GPIO_Disable_HW_Reset();
+    if (!GPIO_GetPinStatus(RESET_FLASH_PORT, RESET_FLASH_PIN)) {
+        GPIO_Disable_HW_Reset();
+    }
 
     // In Boost mode enable the DCDC converter to supply VBAT_HIGH for the used GPIOs
     syscntl_dcdc_turn_on_in_boost(SYSCNTL_DCDC_LEVEL_3V0);

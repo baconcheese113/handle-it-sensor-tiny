@@ -135,6 +135,14 @@ static void app_button_press_cb(void)
     }
 #endif
     app_resume_system_from_sleep();
+
+    arch_printf("Reset pin status = %i\n\r", GPIO_GetPinStatus(RESET_FLASH_PORT, RESET_FLASH_PIN));
+
+    if(GPIO_GetPinStatus(RESET_FLASH_PORT, RESET_FLASH_PIN)) {
+        // fail safe to recover chip from hibernation
+        int8_t error = spi_flash_chip_erase_forced();
+        arch_printf("spi_flash_chip_erase_forced() = %i\n\r", error);
+    }
     
     update_adv_data();
 
@@ -188,6 +196,7 @@ void app_advertise_complete(const uint8_t status)
     
     if ((status == GAP_ERR_NO_ERROR) || (status == GAP_ERR_CANCELED))
     {
+        arch_printf("GAP_ERR_NO_ERROR || GAP_ERR_CANCELED\n\r");
 
 #if (BLE_PROX_REPORTER)
         app_proxr_alert_stop();
@@ -196,39 +205,46 @@ void app_advertise_complete(const uint8_t status)
 
     if (status == GAP_ERR_CANCELED)
     {
+        arch_printf("GAP_ERR_CANCELED\n\r");
         arch_ble_ext_wakeup_on();
 
-    // Configure PD_TIM
-    // Close PD_TIM
-    SetBits16(PMU_CTRL_REG, TIM_SLEEP, 1);
-    // Wait until PD_TIM is closed
-    while ((GetWord16(SYS_STAT_REG) & TIM_IS_DOWN) != TIM_IS_DOWN)
+        if(GPIO_GetPinStatus(RESET_FLASH_PORT, RESET_FLASH_PIN)) {
+            arch_printf("Reset pin preventing hibernation\n\r");
+            GPIO_Enable_HW_Reset();
+            return;
+        }
 
-#if defined (CFG_APP_GOTO_HIBERNATION)   
-    //powering down flash before entering hibernation 
-    spi_flash_power_down(); 			
-            
-    // Put system into hibernation
-    arch_set_hibernation(HIB_WAKE_UP_PIN_MASK,
-                            CFG_HIBERNATION_RAM1,
-                            CFG_HIBERNATION_RAM2,
-                            CFG_HIBERNATION_RAM3,
-                            CFG_HIBERNATION_REMAP,
-                            CFG_HIBERNATION_PAD_LATCH_EN);
+        // Configure PD_TIM
+        // Close PD_TIM
+        SetBits16(PMU_CTRL_REG, TIM_SLEEP, 1);
+        // Wait until PD_TIM is closed
+        while ((GetWord16(SYS_STAT_REG) & TIM_IS_DOWN) != TIM_IS_DOWN)
+
+#if defined (CFG_APP_GOTO_HIBERNATION)
+        //powering down flash before entering hibernation 
+        spi_flash_power_down(); 			
+                
+        // Put system into hibernation
+        arch_set_hibernation(PRESSURE_PIN_MASK,
+                                CFG_HIBERNATION_RAM1,
+                                CFG_HIBERNATION_RAM2,
+                                CFG_HIBERNATION_RAM3,
+                                CFG_HIBERNATION_REMAP,
+                                CFG_HIBERNATION_PAD_LATCH_EN);
 #elif defined (CFG_APP_GOTO_STATEFUL_HIBERNATION)	
-    //powering down flash before entering state-aware hibernation
-    spi_flash_power_down(); 	
-				
-	// Put system into stateful hibernation
-    arch_set_stateful_hibernation(HIB_WAKE_UP_PIN_MASK,
-                                    CFG_STATEFUL_HIBERNATION_RAM1,
-                                    CFG_STATEFUL_HIBERNATION_RAM2,
-                                    CFG_STATEFUL_HIBERNATION_RAM3,
-                                    CFG_STATEFUL_HIBERNATION_REMAP,
-                                    CFG_STATEFUL_HIBERNATION_PAD_LATCH_EN);
+        //powering down flash before entering state-aware hibernation
+        spi_flash_power_down(); 	
+                    
+        // Put system into stateful hibernation
+        arch_set_stateful_hibernation(PRESSURE_PIN_MASK,
+                                        CFG_STATEFUL_HIBERNATION_RAM1,
+                                        CFG_STATEFUL_HIBERNATION_RAM2,
+                                        CFG_STATEFUL_HIBERNATION_RAM3,
+                                        CFG_STATEFUL_HIBERNATION_REMAP,
+                                        CFG_STATEFUL_HIBERNATION_PAD_LATCH_EN);
 
-    // Configure button to trigger wake-up interrupt from extended sleep
-    app_button_enable();
+        // Configure button to trigger wake-up interrupt from extended sleep
+        app_button_enable();
 #endif
     }
 }

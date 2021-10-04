@@ -84,16 +84,14 @@
 #define SPI_FLASH_DEV_SIZE          (256 * 1024)
 
 /****************************************************************************************/
-/* Wake-up from hibernation configuration                                               */
+/* Wake-up from hibernation and measure pressure configuration                          */
 /****************************************************************************************/
-#define HIB_WAKE_UP_PORT            GPIO_PORT_0
-// TODO put on same pin as pressure, or just use pressure_pin
-#define HIB_WAKE_UP_PIN             GPIO_PIN_5
-#define HIB_WAKE_UP_PIN_MASK        (1 << HIB_WAKE_UP_PIN)
-
-// Input ports
 #define PRESSURE_PORT		        GPIO_PORT_0
 #define	PRESSURE_PIN		        GPIO_PIN_5
+#define PRESSURE_PIN_MASK           (1 << PRESSURE_PIN)
+
+#define RESET_FLASH_PORT            GPIO_PORT_0
+#define RESET_FLASH_PIN             GPIO_PIN_6
 
 /***************************************************************************************/
 /* Production debug output configuration                                               */

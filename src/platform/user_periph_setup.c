@@ -55,8 +55,6 @@ void GPIO_reservations(void)
 
 #if (defined (CFG_APP_GOTO_HIBERNATION) || defined (CFG_APP_GOTO_STATEFUL_HIBERNATION))
 	RESERVE_GPIO(PRESSURE, PRESSURE_PORT, PRESSURE_PIN, PID_GPIO);
-    // Reset flash to restore sys from hibernation
-    RESERVE_GPIO(RESET_FLASH, RESET_FLASH_PORT, RESET_FLASH_PIN, PID_GPIO);
 #endif
 
 #if defined (CFG_SPI_FLASH_ENABLE)
@@ -80,8 +78,6 @@ void set_pad_functions(void)
 
 #if (defined (CFG_APP_GOTO_HIBERNATION) || defined (CFG_APP_GOTO_STATEFUL_HIBERNATION))
     GPIO_ConfigurePin(PRESSURE_PORT, PRESSURE_PIN, INPUT, PID_GPIO, true);
-    // Reset flash mem pin
-    GPIO_ConfigurePin(RESET_FLASH_PORT, RESET_FLASH_PIN, INPUT_PULLDOWN, PID_GPIO, false);
 #endif
 
 #if defined (CFG_PRINTF_UART2)
@@ -137,10 +133,6 @@ static const spi_flash_cfg_t spi_flash_cfg = {
 
 void periph_init(void)
 {
-    // Disable HW Reset functionality of P0_0
-    if (!GPIO_GetPinStatus(RESET_FLASH_PORT, RESET_FLASH_PIN)) {
-        GPIO_Disable_HW_Reset();
-    }
 
     // In Boost mode enable the DCDC converter to supply VBAT_HIGH for the used GPIOs
     syscntl_dcdc_turn_on_in_boost(SYSCNTL_DCDC_LEVEL_3V0);

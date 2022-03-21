@@ -90,9 +90,6 @@
 #define	PRESSURE_PIN		        GPIO_PIN_5
 #define PRESSURE_PIN_MASK           (1 << PRESSURE_PIN)
 
-#define RESET_FLASH_PORT            GPIO_PORT_0
-#define RESET_FLASH_PIN             GPIO_PIN_6
-
 /***************************************************************************************/
 /* Production debug output configuration                                               */
 /***************************************************************************************/

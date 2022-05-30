@@ -134,6 +134,26 @@ void app_advertise_complete(const uint8_t status);
 
 void user_app_on_init(void);
 
+#if (BLE_SUOTA_RECEIVER)
+/**
+ ****************************************************************************************
+ * @brief Function called when the SUOTAR status changes.
+ * @param[in] suotar_event SUOTAR_START or SUOTAR_STOP
+ ****************************************************************************************
+ */
+void on_suotar_status_change(const uint8_t suotar_event);
+#endif // BLE_SUOTA_RECEIVER
+
+/**
+ ****************************************************************************************
+ * @brief Disconnection function.
+ * @param[in] param         Pointer to GAPC_DISCONNECT_IND message
+ ****************************************************************************************
+*/
+void user_app_on_disconnect(struct gapc_disconnect_ind const *param);
+
+void user_app_on_db_init_complete(void);
+
 /// @} APP
 
 #endif // _HANDLEIT_SENSOR_H_

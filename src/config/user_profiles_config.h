@@ -36,7 +36,8 @@
 /* Used BLE profiles (used by "rwprf_config.h").                                       */
 /***************************************************************************************/
 
-// #define CFG_PRF_DISS
+#define CFG_PRF_DISS
+#define CFG_PRF_SUOTAR
 #define CFG_PRF_CUST1
 
 /***************************************************************************************/
@@ -61,13 +62,8 @@
 #define APP_DIS_MANUFACTURER_NAME_LEN   (11)
 
 /// Model Number String (up to 18 chars)
-#if defined (__DA14586__)
-    #define APP_DIS_MODEL_NB_STR        ("DA14586")
-#elif defined (__DA14531__)
-    #define APP_DIS_MODEL_NB_STR        ("DA14531")
-#else
-     #define APP_DIS_MODEL_NB_STR       ("DA14585")
-#endif
+
+#define APP_DIS_MODEL_NB_STR            ("DA14531")
 #define APP_DIS_MODEL_NB_STR_LEN        (7)
 
 /// System ID - LSB -> MSB
@@ -82,13 +78,7 @@
 #define APP_DIS_SERIAL_NB_STR_LEN       (10)
 
 /// Hardware Revision String
-#if defined (__DA14586__)
-    #define APP_DIS_HARD_REV_STR        ("DA14586")
-#elif defined (__DA14531__)
-    #define APP_DIS_HARD_REV_STR        ("DA14531")
-#else
-    #define APP_DIS_HARD_REV_STR        ("DA14585")
-#endif
+#define APP_DIS_HARD_REV_STR            ("DA14531")
 #define APP_DIS_HARD_REV_STR_LEN        (7)
 
 /// Firmware Revision
@@ -113,15 +103,6 @@
  */
 #define APP_DIS_PNP_ID                  ("\x01\xD2\x00\x80\x05\x00\x01")
 #define APP_DIS_PNP_ID_LEN              (7)
-
-/*
- ****************************************************************************************
- * BASS application profile configuration
- ****************************************************************************************
- */
-
-// Measured in timer units (10ms)
-#define APP_BASS_POLL_INTERVAL           (6000)  //  (6000*10ms)/60sec = Every 1 minute
 
 /// @} APP_CONFIG
 

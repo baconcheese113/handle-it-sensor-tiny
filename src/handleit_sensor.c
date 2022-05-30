@@ -45,7 +45,11 @@
 #include "arch_console.h"
 #include "app_default_handlers.h"
 #include "app_easy_gap.h"
+#include "user_version.h"
 
+#if (BLE_SUOTA_RECEIVER)
+#include "app_suotar.h"
+#endif
 
 #if defined (CFG_SPI_FLASH_ENABLE)
     #include "spi_flash.h"
@@ -214,6 +218,58 @@ void app_advertise_complete(const uint8_t status)
                                 CFG_HIBERNATION_REMAP,
                                 CFG_HIBERNATION_PAD_LATCH_EN);
     }
+}
+
+void on_suotar_status_change(const uint8_t suotar_event)
+{
+#if (!SUOTAR_SPI_DISABLE)
+    uint8_t dev_id;
+
+    // Release Flash from power down
+    spi_flash_release_from_power_down();
+
+    // Try to auto-detect the device
+    spi_flash_auto_detect(&dev_id);
+
+    if (suotar_event == SUOTAR_END)
+    {
+        // Power down SPI Flash
+        spi_flash_power_down();
+    }
+#endif
+}
+
+void user_app_on_disconnect(struct gapc_disconnect_ind const *param)
+{
+    default_app_on_disconnect(NULL);
+
+#if (BLE_SUOTA_RECEIVER)
+    // Issue a platform reset when it is requested by the suotar procedure
+    if (suota_state.reboot_requested)
+    {
+        // Reboot request will be served
+        suota_state.reboot_requested = 0;
+
+        // Platform reset
+        platform_reset(RESET_AFTER_SUOTA_UPDATE);
+    }
+#endif
+}
+
+void user_app_on_db_init_complete(void) {
+    /* Set application version number in DISS */
+    char sw_version[] = SDK_VERSION;
+    struct diss_set_value_req *req = KE_MSG_ALLOC_DYN(DISS_SET_VALUE_REQ,
+                                                    prf_get_task_from_id(TASK_ID_DISS),
+                                                    TASK_APP,
+                                                    diss_set_value_req,
+                                                    sizeof(sw_version));
+    req->value = DIS_SW_REV_STR_CHAR;
+    req->length = sizeof(sw_version);
+    memcpy(req->data, sw_version, sizeof(sw_version));
+    ke_msg_send(req);
+
+    default_app_on_db_init_complete();
 }
 
 /// @} APP

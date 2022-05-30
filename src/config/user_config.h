@@ -87,10 +87,10 @@ static const struct advertise_configuration user_adv_conf = {
     .addr_src = APP_CFG_ADDR_SRC(USER_CFG_ADDRESS_MODE),
 
     /// Minimum interval for advertising
-    .intv_min = MS_TO_BLESLOTS(100),                    // 100ms
+    .intv_min = MS_TO_BLESLOTS(687.5),                    // 687.5ms
 
     /// Maximum interval for advertising
-    .intv_max = MS_TO_BLESLOTS(100),                    // 100ms
+    .intv_max = MS_TO_BLESLOTS(687.5),                    // 687.5ms
 
     /**
      *  Advertising channels map:
@@ -155,9 +155,11 @@ static const struct advertise_configuration user_adv_conf = {
  ****************************************************************************************
  */
 /// Advertising data
-#define USER_ADVERTISE_DATA                   ("\x11"\
-                                            ADV_TYPE_COMPLETE_LIST_128BIT_SERVICE_IDS\
-                                            "\xfb\x34\x9b\x5f\x80\x00\x00\x80\x00\x10\x00\x00\x1a\x18\x00\x10")
+#define USER_ADVERTISE_DATA         ("\x02"\
+                                    ADV_UUID_SUOTAR_SERVICE\
+                                    "\x11"\
+                                    ADV_TYPE_COMPLETE_LIST_128BIT_SERVICE_IDS\
+                                    "\xfb\x34\x9b\x5f\x80\x00\x00\x80\x00\x10\x00\x00\x1a\x18\x00\x10")
 
 /// Advertising data length - maximum 28 bytes, 3 bytes are reserved to set
 #define USER_ADVERTISE_DATA_LEN               (sizeof(USER_ADVERTISE_DATA)-1)
@@ -199,7 +201,7 @@ static const struct gapm_configuration user_gapm_conf = {
 
     /// Maximal MTU. Shall be set to 23 if Legacy Pairing is used, 65 if Secure Connection is used,
     /// more if required by the application
-    .max_mtu = 23,
+    .max_mtu = 247,
 
     /// Device Address Type
     .addr_type = APP_CFG_ADDR_TYPE(USER_CFG_ADDRESS_MODE),
@@ -256,10 +258,10 @@ static const struct gapm_configuration user_gapm_conf = {
     .max_mps = 0,
 
     /// Maximal Tx octets (connInitialMaxTxOctets value, as defined in 4.2 Specification)
-    .max_txoctets = 0,
+    .max_txoctets = 251,
 
     /// Maximal Tx time (connInitialMaxTxTime value, as defined in 4.2 Specification)
-    .max_txtime = 0,
+    .max_txtime = 2120,
 };
 
 /*

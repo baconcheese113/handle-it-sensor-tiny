@@ -81,7 +81,7 @@
 /****************************************************************************************/
 /* SPI Flash configuration                                                              */
 /****************************************************************************************/
-#define SPI_FLASH_DEV_SIZE          (256 * 1024)
+#define SPI_FLASH_DEV_SIZE          (128 * 1024) // 256 for 2Mbit RAM like with Pro DevKit
 
 /****************************************************************************************/
 /* Wake-up from hibernation and measure pressure configuration                          */

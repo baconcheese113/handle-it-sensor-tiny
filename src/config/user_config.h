@@ -155,7 +155,8 @@ static const struct advertise_configuration user_adv_conf = {
  ****************************************************************************************
  */
 /// Advertising data
-#define USER_ADVERTISE_DATA         ("\x02"\
+#define USER_ADVERTISE_DATA         ("\x03"\
+                                    ADV_TYPE_COMPLETE_LIST_16BIT_SERVICE_IDS\
                                     ADV_UUID_SUOTAR_SERVICE\
                                     "\x11"\
                                     ADV_TYPE_COMPLETE_LIST_128BIT_SERVICE_IDS\

@@ -89,7 +89,7 @@
 /****************************************************************************************************************/
 /* Custom heap sizes                                                                                            */
 /****************************************************************************************************************/
-// #define DB_HEAP_SZ              1024
+#define DB_HEAP_SZ              2048
 // #define ENV_HEAP_SZ             4928
 // #define MSG_HEAP_SZ             6880
 // #define NON_RET_HEAP_SZ         2048
@@ -419,7 +419,7 @@
 /* Maximum retention memory in bytes. The base address of the retention data is calculated from the selected    */
 /* size.                                                                                                        */
 /****************************************************************************************************************/
-#define CFG_RET_DATA_SIZE    (2048)
+#define CFG_RET_DATA_SIZE    (2200)
 
 /****************************************************************************************************************/
 /* Maximum uninitialized retained data required by the application.                                             */

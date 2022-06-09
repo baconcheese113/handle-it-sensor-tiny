@@ -45,6 +45,7 @@
 #include "arch_console.h"
 #include "app_default_handlers.h"
 #include "app_easy_gap.h"
+#include "battery.h"
 #include "user_version.h"
 
 #if (BLE_SUOTA_RECEIVER)
@@ -68,6 +69,13 @@
 void update_adv_data(void)
 {
     arch_printf("update_adv_data()\n\r");
+
+    uint8_t batLevel = battery_get_lvl(BATT_CR2032);
+    uint16_t batVoltage = battery_get_voltage(BATT_CR2032);
+    arch_printf("\n\rBattery type: CR2032");
+    arch_printf("\n\rCurrent battery level: %u%c left", batLevel, '%');
+    arch_printf("\n\rCurrent battery voltage: %umV\n\r", batVoltage);
+
     bool isPressing = !GPIO_GetPinStatus(PRESSURE_PORT, PRESSURE_PIN);
     arch_printf("isPressing is %s\n\r", isPressing ? "TRUE" : "FALSE");
     
@@ -84,11 +92,33 @@ void update_adv_data(void)
     req->length = DEF_SVC2_WRITE_VAL_1_CHAR_LEN;
     // Since it's difficult to tell if force is applied to the resistor, we always assume isPressing
     req->value[0] = 0x1F; // isPressing ? 0x1F : 0x00;
-    req->value[1] = 0;
-    req->value[2] = 0;
-    req->value[3] = 0;
 
     ke_msg_send(req);
+
+    // Update BLE characteristic
+    struct custs1_val_set_req *reqBatLvl = KE_MSG_ALLOC_DYN(CUSTS1_VAL_SET_REQ,
+                                                          prf_get_task_from_id(TASK_ID_CUSTS1),
+                                                          TASK_APP,
+                                                          custs1_val_set_req,
+                                                          DEF_BATT_SVC_READ_LVL_CHAR_LEN);
+    reqBatLvl->handle = BATT_SVC_READ_LVL_VAL;
+    reqBatLvl->length = DEF_BATT_SVC_READ_LVL_CHAR_LEN;
+    reqBatLvl->value[0] = batLevel;
+
+    ke_msg_send(reqBatLvl);
+
+    // Update BLE characteristic
+    struct custs1_val_set_req *reqBatVolts = KE_MSG_ALLOC_DYN(CUSTS1_VAL_SET_REQ,
+                                                          prf_get_task_from_id(TASK_ID_CUSTS1),
+                                                          TASK_APP,
+                                                          custs1_val_set_req,
+                                                          DEF_BATT_SVC_READ_VOLTS_CHAR_LEN);
+    reqBatVolts->handle = BATT_SVC_READ_VOLTS_VAL;
+    reqBatVolts->length = DEF_BATT_SVC_READ_VOLTS_CHAR_LEN;
+    reqBatVolts->value[0] = batVoltage >> 8;
+    reqBatVolts->value[1] = batVoltage & 0xFF;
+
+    ke_msg_send(reqBatVolts);
 }
 
 /**

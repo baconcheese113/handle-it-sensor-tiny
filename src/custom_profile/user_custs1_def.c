@@ -55,6 +55,12 @@ static const att_svc_desc128_t custs1_svc2                      = DEF_SVC2_UUID_
 static const uint8_t SVC2_WRITE_VAL_1_UUID_128[ATT_UUID_128_LEN]      = DEF_SVC2_WRITE_VAL_1_UUID_128;
 // static const uint8_t SVC2_WRITE_VAL_2_UUID_128[ATT_UUID_128_LEN]      = DEF_SVC2_WRITE_VAL_2_UUID_128;
 
+// Battery service of the custom server 1
+static const att_svc_desc128_t custs1_batt_svc                      = DEF_BATT_SVC_UUID_128;
+
+static const uint8_t BATT_SVC_READ_LVL_UUID_128[ATT_UUID_128_LEN]      = DEF_BATT_SVC_READ_LVL_UUID_128;
+static const uint8_t BATT_SVC_READ_VOLTS_UUID_128[ATT_UUID_128_LEN]      = DEF_BATT_SVC_READ_VOLTS_UUID_128;
+
 // Service 3 of the custom server 1
 // static const att_svc_desc128_t custs1_svc3                      = DEF_SVC3_UUID_128;
 
@@ -73,7 +79,7 @@ static const uint16_t att_desc_user_desc = ATT_DESC_CHAR_USER_DESCRIPTION;
  ****************************************************************************************
  */
 
-const uint8_t custs1_services[]  = {SVC2_IDX_SVC, CUSTS1_IDX_NB};
+const uint8_t custs1_services[]  = {SVC2_IDX_SVC, BATT_SVC_IDX_SVC, CUSTS1_IDX_NB};
 const uint8_t custs1_services_size = ARRAY_LEN(custs1_services) - 1;
 const uint16_t custs1_att_max_nb = CUSTS1_IDX_NB;
 
@@ -220,6 +226,39 @@ const struct attm_desc_128 custs1_att_db[CUSTS1_IDX_NB] =
     [SVC2_WRITE_1_USER_DESC]           = {(uint8_t*)&att_desc_user_desc, ATT_UUID_16_LEN, PERM(RD, ENABLE),
                                             sizeof(DEF_SVC2_WRITE_VAL_1_USER_DESC) - 1, sizeof(DEF_SVC2_WRITE_VAL_1_USER_DESC) - 1,
                                             (uint8_t *) DEF_SVC2_WRITE_VAL_1_USER_DESC},
+
+    /*************************
+     * Battery service configuration
+     *************************
+     */
+    
+    // Battery Service Declaration
+    [BATT_SVC_IDX_SVC]                     = {(uint8_t*)&att_decl_svc, ATT_UUID_128_LEN, PERM(RD, ENABLE),
+                                            sizeof(custs1_batt_svc), sizeof(custs1_batt_svc), (uint8_t*)&custs1_batt_svc},
+
+    // Battery level Characteristic Declaration
+    [BATT_SVC_READ_LVL_CHAR]                = {(uint8_t*)&att_decl_char, ATT_UUID_16_LEN, PERM(RD, ENABLE), 0, 0, NULL},
+
+    // Battery level Characteristic Value
+    [BATT_SVC_READ_LVL_VAL]                 = {BATT_SVC_READ_LVL_UUID_128, ATT_UUID_128_LEN, PERM(RD, ENABLE),
+                                            DEF_BATT_SVC_READ_LVL_CHAR_LEN, 0, NULL},
+
+    // Battery level Characteristic User Description
+    [BATT_SVC_READ_LVL_USER_DESC]           = {(uint8_t*)&att_desc_user_desc, ATT_UUID_16_LEN, PERM(RD, ENABLE),
+                                            sizeof(DEF_BATT_SVC_READ_LVL_USER_DESC) - 1, sizeof(DEF_BATT_SVC_READ_LVL_USER_DESC) - 1,
+                                            (uint8_t *) DEF_BATT_SVC_READ_LVL_USER_DESC},
+
+    // Battery volts Characteristic Declaration
+    [BATT_SVC_READ_VOLTS_CHAR]                = {(uint8_t*)&att_decl_char, ATT_UUID_16_LEN, PERM(RD, ENABLE), 0, 0, NULL},
+
+    // Battery volts Characteristic Value
+    [BATT_SVC_READ_VOLTS_VAL]                 = {BATT_SVC_READ_VOLTS_UUID_128, ATT_UUID_128_LEN, PERM(RD, ENABLE),
+                                            DEF_BATT_SVC_READ_VOLTS_CHAR_LEN, 0, NULL},
+
+    // Battery volts Characteristic User Description
+    [BATT_SVC_READ_VOLTS_USER_DESC]           = {(uint8_t*)&att_desc_user_desc, ATT_UUID_16_LEN, PERM(RD, ENABLE),
+                                            sizeof(DEF_BATT_SVC_READ_VOLTS_USER_DESC) - 1, sizeof(DEF_BATT_SVC_READ_VOLTS_USER_DESC) - 1,
+                                            (uint8_t *) DEF_BATT_SVC_READ_VOLTS_USER_DESC},
 
     // // Write 2 Characteristic Declaration
     // [SVC2_WRITE_2_CHAR]                = {(uint8_t*)&att_decl_char, ATT_UUID_16_LEN, PERM(RD, ENABLE), 0, 0, NULL},

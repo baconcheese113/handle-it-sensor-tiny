@@ -187,13 +187,9 @@ void app_button_enable(void)
     arch_printf("app_button_enable()\n\r");
     app_easy_wakeup_set(app_wakeup_cb);
     wkupct_register_callback(app_button_press_cb);
-    // We can go to sleep with the pin high or low, so this determines which polarity we want to trigger the wake up
-    uint8_t wkupct_pin_dyn = 
-        GPIO_GetPinStatus(PRESSURE_PORT, PRESSURE_PIN) 
-        ? WKUPCT_PIN_POLARITY_LOW 
-        : WKUPCT_PIN_POLARITY_HIGH;
-    wkupct_enable_irq(WKUPCT_PIN_SELECT(PRESSURE_PORT, PRESSURE_PIN), // select pin (PRESSURE_PORT, PRESSURE_PIN)
-                    WKUPCT_PIN_POLARITY(PRESSURE_PORT, PRESSURE_PIN, wkupct_pin_dyn), // polarity low or high
+
+    wkupct_enable_irq(WKUPCT_PIN_SELECT(PRESSURE_PORT, PRESSURE_PIN), // select pin
+                    WKUPCT_PIN_POLARITY(PRESSURE_PORT, PRESSURE_PIN, WKUPCT_PIN_POLARITY_HIGH), // polarity high
                     1, // 1 event
                     40); // debouncing time = 40
 }
@@ -271,8 +267,6 @@ void on_suotar_status_change(const uint8_t suotar_event)
 
 void user_app_on_disconnect(struct gapc_disconnect_ind const *param)
 {
-    default_app_on_disconnect(NULL);
-
 #if (BLE_SUOTA_RECEIVER)
     // Issue a platform reset when it is requested by the suotar procedure
     if (suota_state.reboot_requested)
@@ -284,6 +278,28 @@ void user_app_on_disconnect(struct gapc_disconnect_ind const *param)
         platform_reset(RESET_AFTER_SUOTA_UPDATE);
     }
 #endif
+
+    arch_ble_ext_wakeup_on();
+
+    // Configure PD_TIM
+    // Close PD_TIM
+    SetBits16(PMU_CTRL_REG, TIM_SLEEP, 1);
+    // Wait until PD_TIM is closed
+    while ((GetWord16(SYS_STAT_REG) & TIM_IS_DOWN) != TIM_IS_DOWN)
+
+    // Configure wake-up controller
+    app_button_enable();
+
+    // Power down the SPI flash
+    spi_flash_power_down(); 			
+            
+    // Put device into hibernation mode
+    arch_set_hibernation(PRESSURE_PIN_MASK,
+                            CFG_HIBERNATION_RAM1,
+                            CFG_HIBERNATION_RAM2,
+                            CFG_HIBERNATION_RAM3,
+                            CFG_HIBERNATION_REMAP,
+                            CFG_HIBERNATION_PAD_LATCH_EN);
 }
 
 void user_app_on_db_init_complete(void) {

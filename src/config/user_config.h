@@ -314,7 +314,7 @@ static const struct default_handlers_configuration  user_default_hnd_conf = {
     // Configure the advertise period in case of DEF_ADV_WITH_TIMEOUT.
     // It is measured in timer units (3 min). Use MS_TO_TIMERUNITS macro to convert
     // from milliseconds (ms) to timer units.
-    .advertise_period = MS_TO_TIMERUNITS(18000),
+    .advertise_period = MS_TO_TIMERUNITS(10000),
 
     // Configure the security start operation of the default handlers
     // if the security is enabled (CFG_APP_SECURITY)

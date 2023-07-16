@@ -1,4 +1,21 @@
+## Getting Started
+
 This project must be located in the <SDK>/projects/target_apps/template
+
+It uses the HJ-531IMF module which contains 1 Mbit of SPI flash memory, 0x20000 in HEX.
+
+Because of the flash memory, and use of FUOTA, it requires a custom bootloader that is included in the final image.
+
+This sectors the flash memory into 3 sections: bootloader, application, and EEPROM data. Application is divided in half to allow for OTA updates.
+
+[user_version.h](./src/user_version.h) is used to set the version number of the application. This is used by the bootloader to determine if an update is needed.
+
+## Programming flash
+
+1. Solder module to an adapter board with JTAG connection through JLINK cable or Dialog Pro Dev Kit (no shorting jumpers needed)
+2. Using SmartSnippets Toolbox (set to 0x20000 flash memory size), program the combined image to the device. This should be nearly 128 KB in size and contain the bootloader and 2 copies of the application. One of the application slots is just a placeholder.
+
+As a note - If the device needs to be re-programmed, then disconnect the power supply from the Flash Storage and then reconnect it. This will cause the device to boot into the bootloader and wait for a new image to be programmed.
 
 ## Resources
 

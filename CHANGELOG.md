@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2023-10-12
+
+### Changed
+- Use static BLE address with unique random generation for each chip
 
 ## [0.1.3] - 2022-10-02
 ### Added

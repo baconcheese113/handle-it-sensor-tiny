@@ -74,7 +74,7 @@ static const struct app_callbacks user_app_callbacks = {
     .app_on_set_dev_info                = default_app_on_set_dev_info,
     .app_on_data_length_change          = NULL,
     .app_on_update_params_request       = default_app_update_params_request,
-    .app_on_generate_static_random_addr = default_app_generate_static_random_addr,
+    .app_on_generate_static_random_addr = default_app_generate_unique_static_random_addr,
     .app_on_svc_changed_cfg_ind         = NULL,
     .app_on_get_peer_features           = NULL,
 #if (BLE_APP_SEC)

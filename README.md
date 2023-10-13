@@ -13,9 +13,10 @@ This sectors the flash memory into 3 sections: bootloader, application, and EEPR
 ## Programming flash
 
 1. Solder module to an adapter board with JTAG connection through JLINK cable or Dialog Pro Dev Kit (no shorting jumpers needed)
-2. Using SmartSnippets Toolbox (set to 0x20000 flash memory size), program the combined image to the device. This should be nearly 128 KB in size and contain the bootloader and 2 copies of the application. One of the application slots is just a placeholder.
-
-As a note - If the device needs to be re-programmed, then disconnect the power supply from the Flash Storage and then reconnect it. This will cause the device to boot into the bootloader and wait for a new image to be programmed.
+2. Build the project with Keil uVision, then copy `out_DA14531/Objects/handleit_sensor_531.bin` to `input` and rename to the laest version corresponding with `user_version.h`
+3. Make single image from the `input/sensor-x-x-x.bin` in SmartSnippets Toolbox. This will be the application image.
+4. Using SmartSnippets Toolbox (set to 0x20000 flash memory size), program the combined image to the device. This should be nearly 128 KB in size and contain the bootloader and 2 copies of the application. One of the application slots is just a placeholder.
+5. Add the application image to cloud storage and update the latest sensor env var.
 
 ## Resources
 
